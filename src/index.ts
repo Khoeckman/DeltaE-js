@@ -1,0 +1,174 @@
+export type LAB = [L: number, a: number, b: number]
+
+export interface InputWeights {
+  lightness: 1 | 2
+  chroma: number
+  hue: number
+}
+
+/**
+ * The CIE76 color difference algorithm: Euclidean distance in LAB space.
+ * https://en.wikipedia.org/wiki/Color_difference#CIE76
+ */
+export function getDeltaE_CIE76(x1: LAB, x2: LAB): number {
+  const dL = x2[0] - x1[0]
+  const da = x2[1] - x1[1]
+  const db = x2[2] - x1[2]
+
+  return Math.sqrt(dL * dL + da * da + db * db)
+}
+
+/**
+ * The CMC l:c (1984) color difference algorithm.
+ * https://en.wikipedia.org/wiki/Color_difference#CMC_l:c_(1984)
+ */
+export function getDeltaE_CMC(
+  [L1, a1, b1]: LAB,
+  [L2, a2, b2]: LAB,
+  weights: Partial<Omit<InputWeights, 'hue'>> = {}
+): number {
+  const { abs, atan2, cos, sqrt, PI } = Math
+
+  const { lightness: l = 2, chroma: c = 1 } = weights
+
+  const dL = L2 - L1
+  const da = a2 - a1
+  const db = b2 - b1
+
+  // chroma of each color
+  const C1 = sqrt(a1 * a1 + b1 * b1)
+  const C2 = sqrt(a2 * a2 + b2 * b2)
+  const dC = C2 - C1
+
+  // hue difference component
+  const dH = sqrt(da * da + db * db - dC * dC)
+
+  const h1 = (atan2(b1, a1) / PI) * 180 // rad to deg
+
+  // hue rotation term
+  const T =
+    h1 >= 164 && h1 <= 345
+      ? 0.56 + abs(0.2 * cos(((h1 + 168) * PI) / 180)) // deg to rad
+      : 0.36 + abs(0.4 * cos(((h1 + 35) * PI) / 180)) // deg to rad
+
+  const C1Pow4 = C1 ** 4
+  // reference chroma
+  const F = sqrt(C1Pow4 / (C1Pow4 + 1900))
+
+  // weighting functions
+  const S_L = L1 < 16 ? 0.511 : (0.040975 * L1) / (1 + 0.01765 * L1)
+  const S_C = (0.0638 * C1) / (1 + 0.0131 * C1) + 0.638
+  const S_H = S_C * (F * T + 1 - F)
+
+  const L = dL / (l * S_L)
+  const C = dC / (c * S_C)
+  const H = dH / S_H
+
+  return sqrt(L * L + C * C + H * H)
+}
+
+/**
+ * The CIE94 color difference algorithm.
+ * https://en.wikipedia.org/wiki/Color_difference#CIE94
+ */
+export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<InputWeights> = {}): number {
+  const { sqrt } = Math
+
+  const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
+  const K1 = kL === 1 ? 0.045 : 0.048
+  const K2 = kL === 1 ? 0.015 : 0.014
+
+  const dL = L1 - L2
+  const da = a1 - a2
+  const db = b1 - b2
+
+  const C1 = sqrt(a1 * a1 + b1 * b1)
+  const C2 = sqrt(a2 * a2 + b2 * b2)
+  const dC = C1 - C2
+
+  // hue difference component
+  const dH = sqrt(da * da + db + db - dC * dC)
+
+  // weighting functions
+  // const S_L = 1
+  const S_C = 1 + K1 * C1
+  const S_H = 1 + K2 * C1
+
+  const L = dL / kL // const L = dL / (kC * S_L)
+  const C = dC / (kC * S_C)
+  const H = dH / (kH * S_H)
+
+  return sqrt(L * L + C * C + H * H)
+}
+
+/**
+ * The CIEDE2000 color difference algorithm.
+ * https://en.wikipedia.org/wiki/Color_difference#CIEDE2000
+ */
+export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<InputWeights> = {}): number {
+  const { atan2, cos, exp, sin, sqrt, PI } = Math
+
+  const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
+
+  const dLPrime = L2 - L1
+
+  // chroma of each color
+  const C1 = sqrt(a1 * a1 + b1 * b1)
+  const C2 = sqrt(a2 * a2 + b2 * b2)
+
+  const LBar = (L1 + L2) / 2
+  const CBar = (C1 + C2) / 2
+
+  const CBarPow7 = CBar ** 7
+  // hue rotation factor
+  const G = (1 - sqrt(CBarPow7 / (CBarPow7 + 25 ** 7))) / 2
+
+  const aPrime1 = a1 + (a1 / 2) * (1 - G)
+  const aPrime2 = a2 + (a2 / 2) * (1 - G)
+
+  const CPrime1 = sqrt(aPrime1 * aPrime1 + b1 * b1)
+  const CPrime2 = sqrt(aPrime2 * aPrime2 + b2 * b2)
+  const CBarPrime = (CPrime1 + CPrime2) / 2
+  const dCPrime = CPrime2 - CPrime1
+
+  // hue angles in degrees
+  const hPrime1 = (atan2(b1, aPrime1) / PI) * 180 // rad to deg
+  const hPrime2 = (atan2(b2, aPrime2) / PI) * 180 // rad to deg
+
+  let dHPrime = 0
+  let hBarPrime = 0
+
+  if (C1 === 0 || C2 === 0) {
+    hBarPrime = hPrime1 + hPrime2 // undefined hue, sum as placeholder
+  } else {
+    // shortest angular difference [-180,180]
+    const dhPrime = ((((hPrime2 - hPrime1 + 180) % 360) + 360) % 360) - 180 // normalize angle from [-360,360] to [-180,180]
+    dHPrime = 2 * sqrt(C1 * C2) * sin((dhPrime / 360) * PI) // deg to rad
+    hBarPrime = (hPrime1 + dhPrime / 2 + 360) % 360 // average hue, wrapped to [0,360]
+  }
+
+  // hue rotation term
+  const T =
+    1 -
+    0.17 * cos(((hBarPrime - 30) / 180) * PI) +
+    0.24 * cos(((2 * hBarPrime) / 180) * PI) +
+    0.32 * cos(((3 * hBarPrime + 6) / 180) * PI) -
+    0.2 * cos(((4 * hBarPrime - 63) / 180) * PI) // deg to rad
+
+  // lightness weighting
+  const dLBarPow2 = (LBar - 50) * (LBar - 50)
+  const S_L = 1 + (0.015 * dLBarPow2) / sqrt(20 + dLBarPow2)
+
+  // chroma and hue weightings
+  const S_C = 1 + 0.045 * CBarPrime
+  const S_H = 1 + 0.015 * CBarPrime * T
+
+  // rotation term for hue interaction
+  const R_T = -2 * G * sin(60 * exp((-(((hBarPrime - 275) / 25) ** 2) / 180) * PI)) // deg to rad
+
+  const L = dLPrime / (kL * S_L)
+  const C = dCPrime / (kC * S_C)
+  const H = dHPrime / (kH * S_H)
+
+  return sqrt(L * L + C * C + H * H + R_T * (C * H))
+}
