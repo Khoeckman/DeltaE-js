@@ -6,6 +6,8 @@ export interface InputWeights {
   hue: number
 }
 
+const { abs, atan2, cos, exp, sin, sqrt, PI } = Math
+
 /**
  * The CIE76 color difference algorithm: Euclidean distance in LAB space.
  * https://en.wikipedia.org/wiki/Color_difference#CIE76
@@ -15,7 +17,7 @@ export function getDeltaE_CIE76(x1: LAB, x2: LAB): number {
   const da = x2[1] - x1[1]
   const db = x2[2] - x1[2]
 
-  return Math.sqrt(dL * dL + da * da + db * db)
+  return sqrt(dL * dL + da * da + db * db)
 }
 
 /**
@@ -27,8 +29,6 @@ export function getDeltaE_CMC(
   [L2, a2, b2]: LAB,
   weights: Partial<Omit<InputWeights, 'hue'>> = {}
 ): number {
-  const { abs, atan2, cos, sqrt, PI } = Math
-
   const { lightness: l = 2, chroma: c = 1 } = weights
 
   const dL = L2 - L1
@@ -72,8 +72,6 @@ export function getDeltaE_CMC(
  * https://en.wikipedia.org/wiki/Color_difference#CIE94
  */
 export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<InputWeights> = {}): number {
-  const { sqrt } = Math
-
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
   const K1 = kL === 1 ? 0.045 : 0.048
   const K2 = kL === 1 ? 0.015 : 0.014
@@ -106,8 +104,6 @@ export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: P
  * https://en.wikipedia.org/wiki/Color_difference#CIEDE2000
  */
 export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<InputWeights> = {}): number {
-  const { atan2, cos, exp, sin, sqrt, PI } = Math
-
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
 
   const dLPrime = L2 - L1
