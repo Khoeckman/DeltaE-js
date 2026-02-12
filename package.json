@@ -31,8 +31,6 @@
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^12.3.0",
     "@vitest/ui": "^4.0.18",
-    "@types/node": "^24.10.7",
-    "mocha": "^11.3.0",
     "pnpm": "^10.28.0",
     "prettier": "^3.7.4",
     "rollup": "^4.55.1",
@@ -53,9 +51,12 @@
     "url": "git+https://github.com/Khoeckman/DeltaE-js.git"
   },
   "keywords": [
-    "cie",
-    "cie94",
-    "cie76",
+    "CIE",
+    "CIE76",
+    "CMC",
+    "CIE94",
+    "CIE00",
+    "CIEDE2000",
     "color difference",
     "color algorithm",
     "delta e"

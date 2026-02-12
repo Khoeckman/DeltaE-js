@@ -25,13 +25,34 @@ const lab1: LAB = [36, 60, 41]
 const lab2: LAB = [100, 40, 90]
 
 // 1976 formula
-console.log(DeltaE.getDeltaE76(lab1, lab2))
+DeltaE.getDeltaE_CIE76(lab1, lab2)
+
+// 1984 formula
+DeltaE.getDeltaE_CMC(lab1, lab2)
 
 // 1994 formula
-console.log(DeltaE.getDeltaE94(lab1, lab2))
+DeltaE.getDeltaE_CIE94(lab1, lab2)
 
 // 2000 formula
-console.log(DeltaE.getDeltaE00(lab1, lab2))
+DeltaE.getDeltaE_CIEDE2000(lab1, lab2)
+```
+
+### Advanced Usage
+
+```ts
+const weights_LC = {
+  lightness: 2,
+  chroma: 1,
+}
+DeltaE.getDeltaE_CMC(lab1, lab2, weights_LC)
+
+const weights_LCH = {
+  lightness: 1,
+  chroma: 1,
+  hue: 1,
+}
+DeltaE.getDeltaE_CIE94(lab1, lab2, weights_LCH)
+DeltaE.getDeltaE_CIEDE2000(lab1, lab2, weights_LCH)
 ```
 
 ## CIELAB (LAB) Color Space

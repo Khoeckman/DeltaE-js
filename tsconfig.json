@@ -1,11 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
-
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "target": "esnext",
     "useDefineForClassFields": true,
     "module": "esnext",
@@ -14,7 +8,6 @@
     "declarationDir": "./dist",
     "outDir": "./dist",
     "skipLibCheck": true,
-    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
