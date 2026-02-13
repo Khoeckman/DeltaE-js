@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getDeltaE_CIEDE2000 } from '../src/index.ts'
-import type { LAB, CIEDE2000 } from '../src/index.ts'
+import { getDeltaE_CIEDE2000 } from '../dist/index.mjs'
+import type { LAB, CIEDE2000 } from '../dist/index.d.ts'
 
 // https://colormine.org/delta-e-calculator/cie2000
 

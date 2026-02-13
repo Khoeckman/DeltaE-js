@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getDeltaE_CIE94 } from '../src/index.ts'
-import type { LAB, CIE94 } from '../src/index.ts'
+import { getDeltaE_CIE94 } from '../dist/index.mjs'
+import type { LAB, CIE94 } from '../dist/index.d.ts'
 
 // https://colormine.org/delta-e-calculator/cie94
 
