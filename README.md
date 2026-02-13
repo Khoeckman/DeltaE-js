@@ -1,5 +1,10 @@
 # DeltaE-JS - Quantify Color Differences in JavaScript/TypeScript
 
+<span class="badge-npmversion"><a href="https://npmjs.org/package/deltae-js" title="View this project on NPM"><img src="https://img.shields.io/npm/v/deltae-js.svg" alt="NPM version" /></a></span>
+<span class="badge-npmversion"><a href="https://npmjs.org/package/deltae-js" title="View this project on NPM"><img src="https://img.shields.io/npm/d18m/deltae-js.svg" alt="NPM downloads" /></a></span>
+<span><a href="https://www.jsdelivr.com/package/npm/deltae-js" title="View this project on jsDelivr"><img src="https://data.jsdelivr.com/v1/package/npm/deltae-js/badge?style=rounded" alt="jsDelivr hits" /></a></span>
+<span><a href="https://github.com/Khoeckman/deltae-js/actions" title="View GitHub workflows"><img src="https://github.com/Khoeckman/deltae-js/actions/workflows/node.js.yml/badge.svg" alt="GitHub workflows" /></a></span>
+
 This package gives access to three color difference algorithms.
 These algorithms represent the hard work of the [International Commission on Illumination (CIE).](https://www.cie.co.at/)
 
