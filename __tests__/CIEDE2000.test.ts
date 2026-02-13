@@ -1,97 +1,108 @@
 import { describe, expect, it } from 'vitest'
 import { getDeltaE_CIEDE2000 } from '../src/index.ts'
-import type { LAB } from '../src/index.ts'
+import type { LAB, Weights } from '../src/index.ts'
 
 // https://colormine.org/delta-e-calculator/cie2000
 
-function assertDeltaE_CIEDE2000(expected: number, c1: LAB, c2: LAB) {
-  expect(getDeltaE_CIEDE2000(c1, c2)).toBeCloseTo(expected, 4)
-}
+describe('CIEDE2000 (1:1:1)', () => {
+  const weights: Weights = {
+    lightness: 1,
+    chroma: 1,
+    hue: 1,
+  }
 
-describe('CIEDE2000', () => {
+  function assertDeltaE_CIEDE2000(expected: number, x1: LAB, x2: LAB) {
+    expect(getDeltaE_CIEDE2000(x1, x2, weights)) //
+      .toBeCloseTo(expected, 4)
+  }
+
+  it('0.00 difference', () => {
+    assertDeltaE_CIEDE2000(0, [0, 0, 0], [0, 0, 0])
+    assertDeltaE_CIEDE2000(0, [99.5, 0.005, -0.01], [99.5, 0.005, -0.01])
+  })
+  it('100.00 difference', () => {
+    assertDeltaE_CIEDE2000(100, [100, 0.01, -0.01], [0, 0, 0])
+  })
+
   /**
-   * Cases taken from the paper "The CIEDE2000 Color-Difference Formula:
-   * Implementation Notes, Supplementary Test Data, and Mathematical Observations"
-   * by Gaurav Sharma, Wencheng Wu and Edul N. Dalal.
+   * Sharma, G., Wencheng Wu, & Edul N. Dalal. (2004).
+   * The CIEDE2000 Color-Difference Formula:
+   * implementation notes, supplementary test data, and mathematical observations.
+   *
+   * (pp. 4) TABLE I. CIEDE2000 total color difference test data:
+   * https://hajim.rochester.edu/ece/sites/gsharma/papers/CIEDE2000CRNAFeb05.pdf
    */
-  it('0.0 difference', () => {
-    assertDeltaE_CIEDE2000(0.0, [0.0, 0.0, 0.0], [0.0, 0.0, 0.0])
-    assertDeltaE_CIEDE2000(0.0, [99.5, 0.005, -0.01], [99.5, 0.005, -0.01])
-  })
-  it('100.0 difference', () => {
-    assertDeltaE_CIEDE2000(100.0, [100, 0.005, -0.01], [0.0, 0.0, 0.0])
-  })
   it('True chroma difference (#1)', () => {
-    assertDeltaE_CIEDE2000(2.0425, [50.0, 2.6772, -79.7751], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(2.0425, [50, 2.6772, -79.7751], [50, 0, -82.7485])
   })
   it('True chroma difference (#2)', () => {
-    assertDeltaE_CIEDE2000(2.8615, [50.0, 3.1571, -77.2803], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(2.8615, [50, 3.1571, -77.2803], [50, 0, -82.7485])
   })
   it('True chroma difference (#3)', () => {
-    assertDeltaE_CIEDE2000(3.4412, [50.0, 2.8361, -74.02], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(3.4412, [50, 2.8361, -74.02], [50, 0, -82.7485])
   })
   it('True hue difference (#4)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, -1.3802, -84.2814], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(1, [50, -1.3802, -84.2814], [50, 0, -82.7485])
   })
   it('True hue difference (#5)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, -1.1848, -84.8006], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(1, [50, -1.1848, -84.8006], [50, 0, -82.7485])
   })
   it('True hue difference (#6)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, -0.9009, -85.5211], [50.0, 0.0, -82.7485])
+    assertDeltaE_CIEDE2000(1, [50, -0.9009, -85.5211], [50, 0, -82.7485])
   })
   it('Arctangent computation (#7)', () => {
-    assertDeltaE_CIEDE2000(2.3669, [50.0, 0.0, 0.0], [50.0, -1.0, 2.0])
+    assertDeltaE_CIEDE2000(2.3669, [50, 0, 0], [50, -1, 2])
   })
   it('Arctangent computation (#8)', () => {
-    assertDeltaE_CIEDE2000(2.3669, [50.0, -1.0, 2.0], [50.0, 0.0, 0.0])
+    assertDeltaE_CIEDE2000(2.3669, [50, -1, 2], [50, 0, 0])
   })
   it('Arctangent computation (#9)', () => {
-    assertDeltaE_CIEDE2000(7.1792, [50.0, 2.49, -0.001], [50.0, -2.49, 0.0009])
+    assertDeltaE_CIEDE2000(7.1792, [50, 2.49, -0.001], [50, -2.49, 0.0009])
   })
   it('Arctangent computation (#10)', () => {
-    assertDeltaE_CIEDE2000(7.1792, [50.0, 2.49, -0.001], [50.0, -2.49, 0.001])
+    assertDeltaE_CIEDE2000(7.1792, [50, 2.49, -0.001], [50, -2.49, 0.001])
   })
   it('Arctangent computation (#11)', () => {
-    assertDeltaE_CIEDE2000(7.2195, [50.0, 2.49, -0.001], [50.0, -2.49, 0.0011])
+    assertDeltaE_CIEDE2000(7.2195, [50, 2.49, -0.001], [50, -2.49, 0.0011])
   })
   it('Arctangent computation (#12)', () => {
-    assertDeltaE_CIEDE2000(7.2195, [50.0, 2.49, -0.001], [50.0, -2.49, 0.0012])
+    assertDeltaE_CIEDE2000(7.2195, [50, 2.49, -0.001], [50, -2.49, 0.0012])
   })
   it('Arctangent computation (#13)', () => {
-    assertDeltaE_CIEDE2000(4.8045, [50.0, -0.001, 2.49], [50.0, 0.0009, -2.49])
+    assertDeltaE_CIEDE2000(4.8045, [50, -0.001, 2.49], [50, 0.0009, -2.49])
   })
   it('Arctangent computation (#14)', () => {
-    assertDeltaE_CIEDE2000(4.8045, [50.0, -0.001, 2.49], [50.0, 0.001, -2.49])
+    assertDeltaE_CIEDE2000(4.7461, [50, -0.001, 2.49], [50, 0.001, -2.49])
   })
   it('Arctangent computation (#15)', () => {
-    assertDeltaE_CIEDE2000(4.7461, [50.0, -0.001, 2.49], [50.0, 0.0011, -2.49])
+    assertDeltaE_CIEDE2000(4.7461, [50, -0.001, 2.49], [50, 0.0011, -2.49])
   })
   it('Arctangent computation (#16)', () => {
-    assertDeltaE_CIEDE2000(4.3065, [50.0, 2.5, 0.0], [50.0, 0.0, -2.5])
+    assertDeltaE_CIEDE2000(4.3065, [50, 2.5, 0], [50, 0, -2.5])
   })
   it('Large color differences (#17)', () => {
-    assertDeltaE_CIEDE2000(27.1492, [50.0, 2.5, 0.0], [73.0, 25.0, -18.0])
+    assertDeltaE_CIEDE2000(27.1492, [50, 2.5, 0], [73, 25, -18])
   })
   it('Large color differences (#18)', () => {
-    assertDeltaE_CIEDE2000(22.8977, [50.0, 2.5, 0.0], [61.0, -5.0, 29.0])
+    assertDeltaE_CIEDE2000(22.8977, [50, 2.5, 0], [61, -5, 29])
   })
   it('Large color differences (#19)', () => {
-    assertDeltaE_CIEDE2000(31.903, [50.0, 2.5, 0.0], [56.0, -27.0, -3.0])
+    assertDeltaE_CIEDE2000(31.903, [50, 2.5, 0], [56, -27, -3])
   })
   it('Large color differences (#20)', () => {
-    assertDeltaE_CIEDE2000(19.4535, [50.0, 2.5, 0.0], [58.0, 24.0, 15.0])
+    assertDeltaE_CIEDE2000(19.4535, [50, 2.5, 0], [58, 24, 15])
   })
   it('CIE technical report (#21)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, 2.5, 0.0], [50.0, 3.1736, 0.5854])
+    assertDeltaE_CIEDE2000(1, [50, 2.5, 0], [50, 3.1736, 0.5854])
   })
   it('CIE technical report (#22)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, 2.5, 0.0], [50.0, 3.2972, 0.0])
+    assertDeltaE_CIEDE2000(1, [50, 2.5, 0], [50, 3.2972, 0])
   })
   it('CIE technical report (#23)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, 2.5, 0.0], [50.0, 1.8634, 0.5757])
+    assertDeltaE_CIEDE2000(1, [50, 2.5, 0], [50, 1.8634, 0.5757])
   })
   it('CIE technical report (#24)', () => {
-    assertDeltaE_CIEDE2000(1.0, [50.0, 2.5, 0.0], [50.0, 3.2592, 0.335])
+    assertDeltaE_CIEDE2000(1, [50, 2.5, 0], [50, 3.2592, 0.335])
   })
   it('CIE technical report (#25)', () => {
     assertDeltaE_CIEDE2000(1.2644, [60.2574, -34.0099, 36.2677], [60.4626, -34.1751, 39.4387])
