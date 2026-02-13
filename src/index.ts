@@ -115,9 +115,12 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
 
   const dLPrime = L2 - L1
 
+  const b1Pow2 = b1 * b1
+  const b2Pow2 = b2 * b2
+
   // chroma of each color
-  const C1 = sqrt(a1 * a1 + b1 * b1)
-  const C2 = sqrt(a2 * a2 + b2 * b2)
+  const C1 = sqrt(a1 * a1 + b1Pow2)
+  const C2 = sqrt(a2 * a2 + b2Pow2)
 
   const LBar = (L1 + L2) / 2
   const CBar = (C1 + C2) / 2
@@ -129,14 +132,14 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
   const aPrime1 = a1 + a1 * G
   const aPrime2 = a2 + a2 * G
 
-  const CPrime1 = sqrt(aPrime1 * aPrime1 + b1 * b1)
-  const CPrime2 = sqrt(aPrime2 * aPrime2 + b2 * b2)
+  const CPrime1 = sqrt(aPrime1 * aPrime1 + b1Pow2)
+  const CPrime2 = sqrt(aPrime2 * aPrime2 + b2Pow2)
   const CBarPrime = (CPrime1 + CPrime2) / 2
   const dCPrime = CPrime2 - CPrime1
 
   // hue angles in degrees
-  const hPrime1 = ((atan2(b1, aPrime1) / PI) * 180 + 360) % 360 // rad to deg
-  const hPrime2 = ((atan2(b2, aPrime2) / PI) * 180 + 360) % 360 // rad to deg
+  const hPrime1 = (atan2(b1, aPrime1) / PI) * 180 // rad to deg
+  const hPrime2 = (atan2(b2, aPrime2) / PI) * 180 // rad to deg
 
   let dHPrime = 0
   let hBarPrime = 0
@@ -145,9 +148,9 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
     hBarPrime = hPrime1 + hPrime2 // undefined hue, sum as placeholder
   } else {
     // shortest angular difference [-180,180]
-    const dhPrime = ((((hPrime2 - hPrime1 + 180) % 360) + 360) % 360) - 180 // normalize angle from [-360,360] to [-180,180]
-    dHPrime = 2 * sqrt(CPrime1 * CPrime2) * sin((dhPrime / 360) * PI) // deg to rad
-    hBarPrime = (hPrime1 + dhPrime / 2 + 360) % 360 // average hue, wrapped to [0,360]
+    const dhPrimeHalf = (((hPrime2 - hPrime1 + 540) % 360) - 180) / 2 // normalize angle from [-360,360] to [-90,90]
+    dHPrime = 2 * sqrt(CPrime1 * CPrime2) * sin((dhPrimeHalf / 180) * PI) // deg to rad
+    hBarPrime = (hPrime1 + dhPrimeHalf + 360) % 360 // average hue, wrapped to [0,360]
   }
 
   // hue rotation term
