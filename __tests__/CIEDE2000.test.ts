@@ -7,8 +7,8 @@ import type { LAB, CIEDE2000 } from '../src/index.ts'
 const x1: LAB = [36, 60, 41]
 const x2: LAB = [55, 66, 77]
 
-const x1f: LAB = [36.23288178584245, 60.10930952982204, 41.22006831026425]
-const x2f: LAB = [55.9588099835815, 66.47798295202801, 77.01211079141827]
+const x1f: LAB = [81.46616267819043, 11.143985285302138, 69.72016882033124]
+const x2f: LAB = [54.007350272360895, 77.76507047052338, -71.51475624720828]
 
 describe('CIEDE2000 (1:1:1)', () => {
   const weights: CIEDE2000 = {
@@ -21,7 +21,7 @@ describe('CIEDE2000 (1:1:1)', () => {
     expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(22.394506952417903, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(22.9922547320809, 12)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(70.5183071276013, 12)
   })
 
   it('0.00 difference', () => {
@@ -161,7 +161,7 @@ describe('CIEDE2000 (2:1:1)', () => {
     expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(15.966839123149132, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(16.064048964165973, 12)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(67.93742486169461, 12)
   })
 })
 
@@ -176,7 +176,7 @@ describe('CIEDE2000 (1:2:1)', () => {
     expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(21.814747434250933, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(22.426524253369486, 12)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(70.25293589976195, 12)
   })
 })
 
@@ -191,6 +191,6 @@ describe('CIEDE2000 (1:1:2)', () => {
     expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(19.939488746945784, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(20.698933318795095, 12)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(40.47100802978132, 12)
   })
 })

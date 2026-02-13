@@ -99,15 +99,15 @@ import type { RGB, LAB } from 'color-convert'
 import { getDeltaE_CIEDE2000 } from 'deltae-js'
 
 const getDeltaE = (a: RGB, b: RGB) => {
-  const x1: LAB = convert.rgb.lab(a)
-  const x2: LAB = convert.rgb.lab(b)
+  const x1: LAB = convert.rgb.lab.raw(a) // Use .raw() to avoid rounding!
+  const x2: LAB = convert.rgb.lab.raw(b)
   return getDeltaE_CIEDE2000(x1, x2)
 }
 
 const a: RGB = [255, 192, 63]
 const b: RGB = [192, 63, 255]
 
-getDeltaE(a, b) // 70.62924208072538
+getDeltaE(a, b) // 70.5183071276013
 ```
 
 This returns the CIEDE2000 delta E of the input RGB colors.
