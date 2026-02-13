@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getDeltaE_CIEDE2000 } from '../src/index.ts'
-import type { LAB, LCH } from '../src/index.ts'
+import type { LAB, CIEDE2000 } from '../src/index.ts'
 
 // https://colormine.org/delta-e-calculator/cie2000
 
@@ -11,7 +11,7 @@ const x1f: LAB = [36.23288178584245, 60.10930952982204, 41.22006831026425]
 const x2f: LAB = [55.9588099835815, 66.47798295202801, 77.01211079141827]
 
 describe('CIEDE2000 (1:1:1)', () => {
-  const weights: LCH = {
+  const weights: CIEDE2000 = {
     lightness: 1,
     chroma: 1,
     hue: 1,
@@ -150,7 +150,7 @@ describe('CIEDE2000 (1:1:1)', () => {
 })
 
 describe('CIEDE2000 (2:1:1)', () => {
-  const weights: LCH = {
+  const weights: CIEDE2000 = {
     lightness: 2,
     chroma: 1,
     hue: 1,
@@ -165,7 +165,7 @@ describe('CIEDE2000 (2:1:1)', () => {
 })
 
 describe('CIEDE2000 (1:2:1)', () => {
-  const weights: LCH = {
+  const weights: CIEDE2000 = {
     lightness: 1,
     chroma: 2,
     hue: 1,
@@ -180,7 +180,7 @@ describe('CIEDE2000 (1:2:1)', () => {
 })
 
 describe('CIEDE2000 (1:1:2)', () => {
-  const weights: LCH = {
+  const weights: CIEDE2000 = {
     lightness: 1,
     chroma: 1,
     hue: 2,

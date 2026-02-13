@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getDeltaE_CMC } from '../src/index.ts'
-import type { LAB, LC } from '../src/index.ts'
+import type { LAB, CMC } from '../src/index.ts'
 
 // https://colormine.org/delta-e-calculator/cmc
 
@@ -20,7 +20,7 @@ describe('CMC (2:1)', () => {
 })
 
 describe('CMC (1:1)', () => {
-  const weights: LC = {
+  const weights: CMC = {
     lightness: 1,
     chroma: 1,
   }
@@ -34,7 +34,7 @@ describe('CMC (1:1)', () => {
 })
 
 describe('CMC (1:2)', () => {
-  const weights: LC = {
+  const weights: CMC = {
     lightness: 1,
     chroma: 2,
   }

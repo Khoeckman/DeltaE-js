@@ -1,11 +1,19 @@
 export type LAB = [L: number, a: number, b: number]
 
-export interface LC {
-  lightness: 1 | 2
+export interface CMC {
+  lightness: number
   chroma: number
 }
 
-export interface LCH extends LC {
+export interface CIE94 {
+  lightness: 1 | 2
+  chroma: number
+  hue: number
+}
+
+export interface CIEDE2000 {
+  lightness: number
+  chroma: number
   hue: number
 }
 
@@ -27,7 +35,7 @@ export function getDeltaE_CIE76(x1: LAB, x2: LAB): number {
  * The CMC l:c (1984) color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CMC_l:c_(1984)
  */
-export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<LC> = {}): number {
+export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CMC> = {}): number {
   const { lightness: l = 2, chroma: c = 1 } = weights
 
   const dL = L2 - L1
@@ -70,7 +78,7 @@ export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Par
  * The CIE94 color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CIE94
  */
-export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<LCH> = {}): number {
+export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CIE94> = {}): number {
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
   const K1 = kL === 1 ? 0.045 : 0.048
   const K2 = kL === 1 ? 0.015 : 0.014
@@ -102,7 +110,7 @@ export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: P
  * The CIEDE2000 color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CIEDE2000
  */
-export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<LCH> = {}): number {
+export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CIEDE2000> = {}): number {
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
 
   const dLPrime = L2 - L1
