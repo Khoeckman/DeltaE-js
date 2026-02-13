@@ -18,8 +18,6 @@ pnpm add deltae-js
 import * as DeltaE from 'deltae-js'
 import type { LAB } from 'deltae-js'
 
-// type LAB = [L: number, a: number, b: number]
-
 // Create two LAB colors to compare
 const lab1: LAB = [36, 60, 41]
 const lab2: LAB = [100, 40, 90]
@@ -40,13 +38,15 @@ DeltaE.getDeltaE_CIEDE2000(lab1, lab2)
 ### Advanced Usage
 
 ```ts
-const weights_LC = {
+import type { Weights_LC, Weights } from 'deltae-js'
+
+const weights_LC: Weights_LC = {
   lightness: 2,
   chroma: 1,
 }
 DeltaE.getDeltaE_CMC(lab1, lab2, weights_LC)
 
-const weights_LCH = {
+const weights_LCH: Weights = {
   lightness: 1,
   chroma: 1,
   hue: 1,
