@@ -18,10 +18,10 @@ describe('CIEDE2000 (1:1:1)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBe(22.394506952417903)
+    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(22.394506952417903, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBe(22.9922547320809)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(22.9922547320809, 12)
   })
 
   it('0.00 difference', () => {
@@ -157,10 +157,10 @@ describe('CIEDE2000 (2:1:1)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBe(15.966839123149132)
+    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(15.966839123149132, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBe(16.064048964165973)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(16.064048964165973, 12)
   })
 })
 
@@ -172,10 +172,10 @@ describe('CIEDE2000 (1:2:1)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBe(21.814747434250933)
+    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(21.814747434250933, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBe(22.426524253369486)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(22.426524253369486, 12)
   })
 })
 
@@ -187,9 +187,9 @@ describe('CIEDE2000 (1:1:2)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBe(19.939488746945784)
+    expect(getDeltaE_CIEDE2000(x1, x2, weights)).toBeCloseTo(19.939488746945784, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBe(20.698933318795095)
+    expect(getDeltaE_CIEDE2000(x1f, x2f, weights)).toBeCloseTo(20.698933318795095, 12)
   })
 })

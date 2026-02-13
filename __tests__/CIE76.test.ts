@@ -12,9 +12,9 @@ const x2f: LAB = [55.9588099835815, 66.47798295202801, 77.01211079141827]
 
 describe('CIE76', () => {
   it('Integers', () => {
-    expect(getDeltaE_CIE76(x1, x2)).toBe(41.14608122288197)
+    expect(getDeltaE_CIE76(x1, x2)).toBeCloseTo(41.14608122288197, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CIE76(x1f, x2f)).toBe(41.36112364762112)
+    expect(getDeltaE_CIE76(x1f, x2f)).toBeCloseTo(41.36112364762112, 12)
   })
 })

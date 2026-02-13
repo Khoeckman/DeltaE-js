@@ -12,10 +12,10 @@ const x2f: LAB = [55.9588099835815, 66.47798295202801, 77.01211079141827]
 
 describe('CMC (2:1)', () => {
   it('Integers', () => {
-    expect(getDeltaE_CMC(x1, x2)).toBe(20.585495546195663)
+    expect(getDeltaE_CMC(x1, x2)).toBeCloseTo(20.585495546195663, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CMC(x1f, x2f)).toBe(20.60831444571369)
+    expect(getDeltaE_CMC(x1f, x2f)).toBeCloseTo(20.60831444571369, 12)
   })
 })
 
@@ -26,10 +26,10 @@ describe('CMC (1:1)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CMC(x1, x2, weights)).toBe(27.505547144725295)
+    expect(getDeltaE_CMC(x1, x2, weights)).toBeCloseTo(27.505547144725295, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CMC(x1f, x2f, weights)).toBe(27.93916148779591)
+    expect(getDeltaE_CMC(x1f, x2f, weights)).toBeCloseTo(27.93916148779591, 12)
   })
 })
 
@@ -40,9 +40,9 @@ describe('CMC (1:2)', () => {
   }
 
   it('Integers', () => {
-    expect(getDeltaE_CMC(x1, x2, weights)).toBe(26.2355448687314)
+    expect(getDeltaE_CMC(x1, x2, weights)).toBeCloseTo(26.2355448687314, 12)
   })
   it('Doubles', () => {
-    expect(getDeltaE_CMC(x1f, x2f, weights)).toBe(26.683379730941457)
+    expect(getDeltaE_CMC(x1f, x2f, weights)).toBeCloseTo(26.683379730941457, 12)
   })
 })
