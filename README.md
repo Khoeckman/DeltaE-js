@@ -10,6 +10,9 @@ These algorithms represent the hard work of the [International Commission on Ill
 
 Historically, each iterative algorithm has been used in print and textile industries to maintain consistency in machine calibration. These days, far more interesting use cases arise with media processing.
 
+The source code is written to be as performant as possible by not using helper functions and instead doing everything inline.
+The output of the `getDeltaE` functions are tested using [Vitest](https://vitest.dev/).
+
 ## Installation
 
 ```shell

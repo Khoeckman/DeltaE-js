@@ -50,13 +50,14 @@ export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Par
   // hue difference component
   const dH = sqrt(da * da + db * db - dC * dC) || 0
 
-  const h1 = (atan2(b1, a1) / PI) * 180 // rad to deg
+  // hue angle in degrees
+  const h1 = (atan2(b1, a1) / PI) * 180
 
   // hue rotation term
   const T =
     h1 >= 164 && h1 <= 345
-      ? 0.56 + abs(0.2 * cos(((h1 + 168) * PI) / 180)) // deg to rad
-      : 0.36 + abs(0.4 * cos(((h1 + 35) * PI) / 180)) // deg to rad
+      ? 0.56 + abs(0.2 * cos(((h1 + 168) * PI) / 180))
+      : 0.36 + abs(0.4 * cos(((h1 + 35) * PI) / 180))
 
   const C1Pow4 = C1 ** 4
   // reference chroma
@@ -122,63 +123,62 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
   const C1 = sqrt(a1 * a1 + b1Pow2)
   const C2 = sqrt(a2 * a2 + b2Pow2)
 
-  const LBar = (L1 + L2) / 2
-  const CBar = (C1 + C2) / 2
+  const Lb = (L1 + L2) / 2
+  const Cb = (C1 + C2) / 2
 
-  const CBarPow7 = CBar ** 7
+  const CbPow7 = Cb ** 7
   // hue rotation factor
-  const G = 0.5 * (1 - sqrt(CBarPow7 / (CBarPow7 + 6103515625)))
+  const G = 0.5 * (1 - sqrt(CbPow7 / (CbPow7 + 6103515625)))
 
-  const aPrime1 = a1 + a1 * G
-  const aPrime2 = a2 + a2 * G
+  const ap1 = a1 + a1 * G
+  const ap2 = a2 + a2 * G
 
-  const CPrime1 = sqrt(aPrime1 * aPrime1 + b1Pow2)
-  const CPrime2 = sqrt(aPrime2 * aPrime2 + b2Pow2)
-  const CBarPrime = (CPrime1 + CPrime2) / 2
-  const dCPrime = CPrime2 - CPrime1
+  const Cp1 = sqrt(ap1 * ap1 + b1Pow2)
+  const Cp2 = sqrt(ap2 * ap2 + b2Pow2)
+  const Cbp = (Cp1 + Cp2) / 2
+  const dCp = Cp2 - Cp1
 
   // hue angles in degrees
-  const hPrime1 = (atan2(b1, aPrime1) / PI) * 180 // rad to deg
-  const hPrime2 = (atan2(b2, aPrime2) / PI) * 180 // rad to deg
+  const hp1 = (atan2(b1, ap1) / PI) * 180
+  const hp2 = (atan2(b2, ap2) / PI) * 180
 
-  let dHPrime = 0
-  let hBarPrime = 0
+  let dHp = 0
+  let hbp = 0
 
-  if (CPrime1 === 0 || CPrime2 === 0) {
-    hBarPrime = hPrime1 + hPrime2 // undefined hue, sum as placeholder
+  if (Cp1 === 0 || Cp2 === 0) {
+    hbp = hp1 + hp2 // undefined hue, sum as placeholder
   } else {
-    // shortest angular difference [-180,180]
-    const dhPrimeHalf = (((hPrime2 - hPrime1 + 540) % 360) - 180) / 2 // normalize angle from [-360,360] to [-90,90]
-    dHPrime = 2 * sqrt(CPrime1 * CPrime2) * sin((dhPrimeHalf / 180) * PI) // deg to rad
-    hBarPrime = (hPrime1 + dhPrimeHalf + 360) % 360 // average hue, wrapped to [0,360]
+    // half of shortest angular difference [-180,180]
+    const dhp1_2 = (((hp2 - hp1 + 540) % 360) - 180) / 2 // normalize angle from [-360,360] to [-90,90]
+    dHp = 2 * sqrt(Cp1 * Cp2) * sin((dhp1_2 / 180) * PI)
+    hbp = (hp1 + dhp1_2 + 360) % 360 // average hue, wrapped to [0,360]
   }
 
   // hue rotation term
   const T =
     1 +
-    -0.17 * cos(((hBarPrime - 30) / 180) * PI) +
-    0.24 * cos(((2 * hBarPrime) / 180) * PI) +
-    0.32 * cos(((3 * hBarPrime + 6) / 180) * PI) +
-    -0.2 * cos(((4 * hBarPrime - 63) / 180) * PI) // deg to rad
+    -0.17 * cos(((hbp - 30) / 180) * PI) +
+    0.24 * cos(((2 * hbp) / 180) * PI) +
+    0.32 * cos(((3 * hbp + 6) / 180) * PI) +
+    -0.2 * cos(((4 * hbp - 63) / 180) * PI)
 
   // lightness weighting
-  const dLBarPow2 = (LBar - 50) * (LBar - 50)
-  const SL = 1 + (0.015 * dLBarPow2) / sqrt(20 + dLBarPow2)
+  const dLbPow2 = (Lb - 50) * (Lb - 50)
+  const SL = 1 + (0.015 * dLbPow2) / sqrt(20 + dLbPow2)
 
   // chroma and hue weightings
-  const SC = 1 + 0.045 * CBarPrime
-  const SH = 1 + 0.015 * CBarPrime * T
+  const SC = 1 + 0.045 * Cbp
+  const SH = 1 + 0.015 * Cbp * T
 
-  const CBarPrimePow7 = CBarPrime ** 7
+  const CbpPow7 = Cbp ** 7
+  const RC = 2 * sqrt(CbpPow7 / (CbpPow7 + 6103515625))
+
   // rotation term for hue interaction
-  const RT =
-    -2 *
-    sqrt(CBarPrimePow7 / (CBarPrimePow7 + 6103515625)) *
-    sin(((60 * exp(-(((hBarPrime - 275) / 25) ** 2))) / 180) * PI) // deg to rad
+  const RT = -sin(((60 * exp(-(((hbp - 275) / 25) ** 2))) / 180) * PI) * RC
 
   const L = dLPrime / (kL * SL)
-  const C = dCPrime / (kC * SC)
-  const H = dHPrime / (kH * SH)
+  const C = dCp / (kC * SC)
+  const H = dHp / (kH * SH)
 
   return sqrt(L * L + C * C + H * H + RT * C * H)
 }
