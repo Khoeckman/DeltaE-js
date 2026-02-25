@@ -1,20 +1,20 @@
 export type LAB = [L: number, a: number, b: number]
 
 export interface CMC {
-  lightness: number
-  chroma: number
+  lightness?: number
+  chroma?: number
 }
 
 export interface CIE94 {
-  lightness: 1 | 2
-  chroma: number
-  hue: number
+  lightness?: 1 | 2
+  chroma?: number
+  hue?: number
 }
 
 export interface CIEDE2000 {
-  lightness: number
-  chroma: number
-  hue: number
+  lightness?: number
+  chroma?: number
+  hue?: number
 }
 
 const { abs, atan2, cos, exp, sin, sqrt, PI } = Math
@@ -35,7 +35,7 @@ export function getDeltaE_CIE76(x1: LAB, x2: LAB): number {
  * The CMC l:c (1984) color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CMC_l:c_(1984)
  */
-export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CMC> = {}): number {
+export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: CMC = {}): number {
   const { lightness: l = 2, chroma: c = 1 } = weights
 
   const dL = L2 - L1
@@ -79,7 +79,7 @@ export function getDeltaE_CMC([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Par
  * The CIE94 color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CIE94
  */
-export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CIE94> = {}): number {
+export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: CIE94 = {}): number {
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
   const K1 = kL === 1 ? 0.045 : 0.048
   const K2 = kL === 1 ? 0.015 : 0.014
@@ -111,7 +111,7 @@ export function getDeltaE_CIE94([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: P
  * The CIEDE2000 color difference algorithm.
  * https://en.wikipedia.org/wiki/Color_difference#CIEDE2000
  */
-export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: Partial<CIEDE2000> = {}): number {
+export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weights: CIEDE2000 = {}): number {
   const { lightness: kL = 1, chroma: kC = 1, hue: kH = 1 } = weights
 
   const dLPrime = L2 - L1
@@ -171,10 +171,9 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
   const SH = 1 + 0.015 * Cbp * T
 
   const CbpPow7 = Cbp ** 7
-  const RC = 2 * sqrt(CbpPow7 / (CbpPow7 + 6103515625))
 
   // rotation term for hue interaction
-  const RT = -sin(((60 * exp(-(((hbp - 275) / 25) ** 2))) / 180) * PI) * RC
+  const RT = -2 * sqrt(CbpPow7 / (CbpPow7 + 6103515625)) * sin(((60 * exp(-(((hbp - 275) / 25) ** 2))) / 180) * PI)
 
   const L = dLPrime / (kL * SL)
   const C = dCp / (kC * SC)
