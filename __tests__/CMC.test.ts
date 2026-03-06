@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { getDeltaE_CMC } from '../src/index.ts'
-import type { LAB, CMC } from '../src/index.ts'
+import { getDeltaE_CMC } from '../src/index'
+import type { LAB, CMC } from '../src/index'
 
 // https://colormine.org/delta-e-calculator/cmc
 
