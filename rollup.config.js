@@ -10,7 +10,14 @@ export default {
       file: 'dist/index.umd.js',
       format: 'umd',
       name: 'DeltaE',
-      plugins: [terser({ format: { comments: false } })],
+      plugins: [
+        terser({
+          keep_classnames: true,
+          format: {
+            comments: false,
+          },
+        }),
+      ],
     },
     { file: 'dist/index.mjs', format: 'es' },
     { file: 'dist/index.cjs', format: 'cjs' },
