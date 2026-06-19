@@ -15,8 +15,9 @@ This is achieved by:
 
 - Precomputing and caching heavy constants (eg. 25^7)
 - Branchless code (using `%` instead of `if else` statements)
-- Reduced arithmetic operations (eg. using `x * x` instead of `Math.pow(x, 2)`)
 - Keeping code unrolled instead of calling small helper functions for simple conversions
+- Reduced arithmetic operations (eg. using `x * x` instead of `Math.pow(x, 2)`)
+- Using inverted constants (eg. `x * invPI` instead of `x / PI`) to avoid floating point divisions
 
 ## Installation
 
