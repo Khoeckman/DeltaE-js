@@ -129,28 +129,26 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
   const Lb = (L1 + L2) * 0.5
   const Cb = (C1 + C2) * 0.5
 
+  // hue rotation factor
   const CbPow3 = Cb * Cb * Cb
   const CbPow7 = CbPow3 * CbPow3 * Cb
-  // hue rotation factor
   const G = (1 - sqrt(CbPow7 / (CbPow7 + POW25_7))) * 0.5
 
-  const ap1 = a1 + a1 * G
-  const ap2 = a2 + a2 * G
+  const ap1 = a1 * (G + 1)
+  const ap2 = a2 * (G + 1)
 
   const Cp1 = sqrt(ap1 * ap1 + b1Pow2)
   const Cp2 = sqrt(ap2 * ap2 + b2Pow2)
   const Cbp = (Cp1 + Cp2) * 0.5
 
-  // hue angles in degrees
-  let hp1 = atan2(b1, ap1) * RAD2DEG
-  let hp2 = atan2(b2, ap2) * RAD2DEG
-
   let dHp = 0
   let hbp = 0
 
-  if (Cp1 === 0 || Cp2 === 0) {
-    hbp = hp1 + hp2 // undefined hue, sum as placeholder
-  } else {
+  if (Cp1 !== 0 && Cp2 !== 0) {
+    // hue angles in degrees
+    const hp1 = atan2(b1, ap1) * RAD2DEG
+    const hp2 = atan2(b2, ap2) * RAD2DEG
+
     // half of shortest angular difference [-180,180]
     const dhp1_2 = (((hp2 - hp1 + 540) % 360) - 180) * 0.5 // normalize angle from [-360,360] to [-90,90]
     dHp = 2 * sqrt(Cp1 * Cp2) * sin(dhp1_2 * DEG2RAD)
@@ -159,25 +157,28 @@ export function getDeltaE_CIEDE2000([L1, a1, b1]: LAB, [L2, a2, b2]: LAB, weight
 
   // hue rotation term
   const T =
-    1 +
-    -0.17 * cos((hbp - 30) * DEG2RAD) +
+    1 -
+    0.17 * cos((hbp - 30) * DEG2RAD) +
     0.24 * cos(2 * hbp * DEG2RAD) +
-    0.32 * cos((3 * hbp + 6) * DEG2RAD) +
-    -0.2 * cos((4 * hbp - 63) * DEG2RAD)
+    0.32 * cos((3 * hbp + 6) * DEG2RAD) -
+    0.2 * cos((4 * hbp - 63) * DEG2RAD)
 
   // lightness weighting
-  const dLbPow2 = (Lb - 50) * (Lb - 50)
+  const dLb = Lb - 50
+  const dLbPow2 = dLb * dLb
   const SL = 1 + (0.015 * dLbPow2) / sqrt(20 + dLbPow2)
 
   // chroma and hue weightings
   const SC = 1 + 0.045 * Cbp
   const SH = 1 + 0.015 * Cbp * T
 
+  // rotation term for hue interaction
   const CbpPow3 = Cbp * Cbp * Cbp
   const CbpPow7 = CbpPow3 * CbpPow3 * Cbp
 
-  // rotation term for hue interaction
-  const RT = -2 * sqrt(CbpPow7 / (CbpPow7 + POW25_7)) * sin(60 * exp(-(((hbp - 275) * 0.04) ** 2)) * DEG2RAD)
+  const dHbp = (hbp - 275) * 0.04
+
+  const RT = -2 * sqrt(CbpPow7 / (CbpPow7 + POW25_7)) * sin(60 * exp(-(dHbp * dHbp)) * DEG2RAD)
 
   const L = (L2 - L1) / (kL * SL)
   const C = (Cp2 - Cp1) / (kC * SC)
