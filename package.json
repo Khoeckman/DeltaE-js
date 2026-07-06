@@ -1,8 +1,8 @@
 {
   "name": "deltae-js",
-  "version": "1.1.11",
+  "version": "1.2.0",
   "description": "CIE color difference algorithms in JavaScript/TypeScript.",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "author": "Khoeckman",
   "type": "module",
   "main": "dist/index.umd.js",
@@ -23,6 +23,7 @@
   "scripts": {
     "test": "vitest run",
     "test:ui": "vitest --ui",
+    "emcc": "emcc src/index.cpp -O3 -sEXPORT_ES6 -lembind --emit-tsd main.d.ts -o src/index.js ",
     "build": "rollup -c",
     "prepack": "bun test && bun run build"
   },
